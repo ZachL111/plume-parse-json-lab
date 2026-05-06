@@ -1,26 +1,44 @@
 # plume-parse-json-lab
 
-plume-parse-json-lab is a Ruby project for parsers. It focuses on this technical goal: Implement a Ruby parsers project for json stream reduction, using windowed input fixtures and late-data behavior checks.
+`plume-parse-json-lab` is a Ruby project for Parsers. It turns implement a Ruby parsers project for json stream reduction, using windowed input fixtures and late-data behavior checks into a small local model with readable fixtures and a direct verification command.
 
-## Why it exists
+## Reading Plume Parse JSON Lab
 
-Small engineering tools are easiest to trust when their rules are explicit, testable, and cheap to run locally. This repository packages a focused model with fixture data and a local verification path so behavior can be reviewed without external services.
+Start with the README, then open `metadata/project.json` to check the constants behind the examples. After that, `fixtures/cases.csv` shows the compact path and `examples/extended_cases.csv` gives a wider look at the same rule.
 
-## Features
+## Design Sketch
 
-- Deterministic policy scoring over fixture scenarios.
-- Clear accept or review decisions based on a documented threshold.
-- A command-line or local test path for quick validation.
-- Golden fixture data for repeatable checks.
-- Minimal dependencies and a compact project layout.
+The interesting part is the boundary between accepted and reviewed scenarios. Extended examples sit near that boundary so future edits can show whether the model became more permissive or more cautious. The Ruby code keeps the module small and leans on Minitest for direct fixture checks.
 
-## Architecture Notes
+## Purpose
 
-The core module exposes a small scoring API. Inputs are simple numeric signals: demand, capacity, latency, risk, and weight. The score uses a threshold of 151, risk penalty 6, latency penalty 3, and weight bonus 6. Tests exercise the public API against the fixture cases in `fixtures/cases.csv`.
+I use this kind of project to make a rule visible before adding more machinery around it. The important part here is not the size of the codebase. It is that the input signals, scoring rule, fixture data, and expected output can all be checked in one sitting.
+
+## What It Does
+
+- Uses fixture data to keep error labels changes visible in code review.
+- Includes extended examples for grammar boundaries, including `recovery` and `degraded`.
+- Documents golden examples tradeoffs in `docs/operations.md`.
+- Runs locally with a single verification command and no external credentials.
+- Stores project constants and verification metadata in `metadata/project.json`.
+
+## Fixture Notes
+
+The extended cases are not random smoke tests. `degraded` keeps pressure on the review path, while `recovery` shows the model when capacity and weight are strong enough to clear the threshold.
+
+## Files Worth Reading
+
+- `lib`: library code
+- `tests`: verification harness
+- `fixtures`: compact golden scenarios
+- `examples`: expanded scenario set
+- `metadata`: project constants and verification metadata
+- `docs`: operations and extension notes
+- `scripts`: local verification and audit commands
 
 ## Setup
 
-Install the Ruby toolchain and run commands from the repository root.
+Install Ruby and run the commands from the repository root. The project does not need credentials or a hosted service.
 
 ## Usage
 
@@ -28,16 +46,23 @@ Install the Ruby toolchain and run commands from the repository root.
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
-The verification script builds or runs the project and checks the fixture decisions.
+This runs the language-level build or test path against the compact fixture set.
 
-## Tests
+## Verification
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit.ps1
 ```
 
-## Limitations And Roadmap
+The audit command checks repository structure and README constraints before it delegates to the verifier.
 
-- The fixture set is intentionally small so it can be audited by hand.
-- Future work could add richer domain-specific input adapters.
-- The model is a local demonstration and does not claim production use.
+## Limits
+
+The examples cover useful edges, not every edge. A larger version would add malformed-input tests, richer reports, and deeper domain parsers.
+
+## Next Directions
+
+- Add a short report command that prints the score breakdown for a single scenario.
+- Add malformed input fixtures so the failure path is as visible as the happy path.
+- Split the scoring constants into a typed configuration object and validate it before use.
+- Add one more parsers fixture that focuses on a malformed or borderline input.
