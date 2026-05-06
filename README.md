@@ -1,44 +1,29 @@
 # plume-parse-json-lab
 
-`plume-parse-json-lab` is a Ruby project for Parsers. It turns implement a Ruby parsers project for json stream reduction, using windowed input fixtures and late-data behavior checks into a small local model with readable fixtures and a direct verification command.
+`plume-parse-json-lab` is a compact Ruby repository for parsers, centered on this goal: Implement a Ruby parsers project for json stream reduction, using windowed input fixtures and late-data behavior checks.
 
-## Reading Plume Parse JSON Lab
+## Why It Exists
 
-Start with the README, then open `metadata/project.json` to check the constants behind the examples. After that, `fixtures/cases.csv` shows the compact path and `examples/extended_cases.csv` gives a wider look at the same rule.
+This is intentionally local and self-contained so it can be inspected without credentials, services, or seeded history.
 
-## Design Sketch
+## Plume Parse JSON Lab Review Notes
 
-The interesting part is the boundary between accepted and reviewed scenarios. Extended examples sit near that boundary so future edits can show whether the model became more permissive or more cautious. The Ruby code keeps the module small and leans on Minitest for direct fixture checks.
+The first comparison I would make is `grammar width` against `token drift` because it shows where the rule is most opinionated.
 
-## Purpose
+## Features
 
-I use this kind of project to make a rule visible before adding more machinery around it. The important part here is not the size of the codebase. It is that the input signals, scoring rule, fixture data, and expected output can all be checked in one sitting.
+- `fixtures/domain_review.csv` adds cases for token drift and grammar width.
+- `metadata/domain-review.json` records the same cases in structured form.
+- `config/review-profile.json` captures the read order and the two review questions.
+- `examples/plume-parse-json-walkthrough.md` walks through the case spread.
+- The Ruby code includes a review path for `grammar width` and `token drift`.
+- `docs/field-notes.md` explains the strongest and weakest cases.
 
-## What It Does
+## Architecture Notes
 
-- Uses fixture data to keep error labels changes visible in code review.
-- Includes extended examples for grammar boundaries, including `recovery` and `degraded`.
-- Documents golden examples tradeoffs in `docs/operations.md`.
-- Runs locally with a single verification command and no external credentials.
-- Stores project constants and verification metadata in `metadata/project.json`.
+The repository has two validation layers: the original compact policy fixture and the domain review fixture. They are separate so one can change without hiding failures in the other.
 
-## Fixture Notes
-
-The extended cases are not random smoke tests. `degraded` keeps pressure on the review path, while `recovery` shows the model when capacity and weight are strong enough to clear the threshold.
-
-## Files Worth Reading
-
-- `lib`: library code
-- `tests`: verification harness
-- `fixtures`: compact golden scenarios
-- `examples`: expanded scenario set
-- `metadata`: project constants and verification metadata
-- `docs`: operations and extension notes
-- `scripts`: local verification and audit commands
-
-## Setup
-
-Install Ruby and run the commands from the repository root. The project does not need credentials or a hosted service.
+The Ruby code keeps the review rule close to the tests.
 
 ## Usage
 
@@ -46,23 +31,10 @@ Install Ruby and run the commands from the repository root. The project does not
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
-This runs the language-level build or test path against the compact fixture set.
+## Tests
 
-## Verification
+The check exercises the source code and the review fixture. `stress` is the high score at 194; `baseline` is the low score at 92.
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit.ps1
-```
+## Limitations And Roadmap
 
-The audit command checks repository structure and README constraints before it delegates to the verifier.
-
-## Limits
-
-The examples cover useful edges, not every edge. A larger version would add malformed-input tests, richer reports, and deeper domain parsers.
-
-## Next Directions
-
-- Add a short report command that prints the score breakdown for a single scenario.
-- Add malformed input fixtures so the failure path is as visible as the happy path.
-- Split the scoring constants into a typed configuration object and validate it before use.
-- Add one more parsers fixture that focuses on a malformed or borderline input.
+The fixture set is small enough to audit by hand. The next useful expansion is malformed input coverage, not extra surface area.

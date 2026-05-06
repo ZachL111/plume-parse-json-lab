@@ -1,0 +1,73 @@
+{
+  "repo": "plume-parse-json-lab",
+  "language": "Ruby",
+  "category": "Parsers",
+  "goal": "Implement a Ruby parsers project for json stream reduction, using windowed input fixtures and late-data behavior checks.",
+  "review_model": {
+    "terms": [
+      "token drift",
+      "grammar width",
+      "label quality",
+      "error locality"
+    ],
+    "lanes": [
+      "ship",
+      "watch",
+      "hold"
+    ],
+    "score": "signal * 2 + slack + confidence - drag * 3",
+    "purpose": "surface the domain-specific cases that need the most careful review"
+  },
+  "cases": [
+    {
+      "name": "baseline",
+      "focus": "token drift",
+      "signal": 43,
+      "slack": 21,
+      "drag": 26,
+      "confidence": 63,
+      "score": 92,
+      "lane": "hold"
+    },
+    {
+      "name": "stress",
+      "focus": "grammar width",
+      "signal": 79,
+      "slack": 44,
+      "drag": 19,
+      "confidence": 49,
+      "score": 194,
+      "lane": "ship"
+    },
+    {
+      "name": "edge",
+      "focus": "label quality",
+      "signal": 71,
+      "slack": 36,
+      "drag": 21,
+      "confidence": 58,
+      "score": 173,
+      "lane": "ship"
+    },
+    {
+      "name": "recovery",
+      "focus": "error locality",
+      "signal": 52,
+      "slack": 21,
+      "drag": 24,
+      "confidence": 73,
+      "score": 126,
+      "lane": "watch"
+    },
+    {
+      "name": "stale",
+      "focus": "token drift",
+      "signal": 62,
+      "slack": 44,
+      "drag": 22,
+      "confidence": 77,
+      "score": 179,
+      "lane": "ship"
+    }
+  ]
+}
